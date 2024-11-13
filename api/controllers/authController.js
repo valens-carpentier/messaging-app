@@ -30,19 +30,20 @@ const registerUser = async (req, res) => {
 
   const loginUser = async (req, res) => {
     try {
-      // Test database connection
       await prisma.$connect();
-      console.log('Successfully connected to database');
-
       const { email, password } = req.body;
-      console.log('Attempting to find user:', email);  // Debug log
       
       const user = await prisma.user.findUnique({ where: { email } });
-      console.log('User found:', user ? 'yes' : 'no');  // Debug log
       
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
+      
+      // Update user status to ONLINE
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { status: 'ONLINE' }
+      });
       
       const token = jwt.sign(
         { id: user.id, role: 'user' },
@@ -52,7 +53,7 @@ const registerUser = async (req, res) => {
       
       res.json({ token });
     } catch (error) {
-      console.error('Detailed error:', error);  // Full error details
+      console.error('Detailed error:', error);
       res.status(400).json({ 
         error: "Login failed", 
         details: error.message,
@@ -61,7 +62,23 @@ const registerUser = async (req, res) => {
     }
   }
 
+  const logoutUser = async (req, res) => {
+    try {
+      const userId = req.user.id; // From auth middleware
+      
+      await prisma.user.update({
+        where: { id: userId },
+        data: { status: 'OFFLINE' }
+      });
+      
+      res.json({ message: 'Logged out successfully' });
+    } catch (error) {
+      res.status(400).json({ error: "Logout failed" });
+    }
+  }
+
   module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
   }

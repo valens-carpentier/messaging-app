@@ -50,6 +50,7 @@ const registerUser = async (req, res) => {
         process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
+      console.log('Generated token:', token.substring(0, 20) + '...');
       
       res.json({ token });
     } catch (error) {

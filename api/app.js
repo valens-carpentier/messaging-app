@@ -1,18 +1,43 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const config = require("./config/config");
 const authRoutes = require("./routes/auth.routes");
 const messageRoutes = require("./routes/message.routes");
 const profileRoutes = require("./routes/profile.routes");
 const cleanup = require("./utils/cleanup");
 const path = require('path');
 
-app.use(cors({
-  origin: "http://localhost:5173",
+if (!process.env.JWT_SECRET) {
+  console.error('JWT_SECRET environment variable is not set!');
+  process.exit(1);
+}
+
+if (!config.corsOrigin || config.corsOrigin.length === 0) {
+  console.error('CORS_ORIGIN is not properly configured!');
+  process.exit(1);
+}
+
+const corsOptions = {
+  origin: function(origin, callback) {
+    console.log('Request origin:', origin);
+    console.log('Allowed origins:', config.corsOrigin);
+    
+    if (!origin || config.corsOrigin.includes(origin)) {
+      console.log('Origin allowed:', origin);
+      callback(null, true);
+    } else {
+      console.log('Origin blocked:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -21,9 +46,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/profile", profileRoutes);
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`);
 });
 
 // Handle cleanup on app termination

@@ -1,14 +1,43 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only images are allowed'));
+    }
+  }
+});
 
 const sendMessage = async (req, res) => {
   try {
     const { recipientId, content } = req.body;
-    const senderId = req.user.id;  // This comes from the auth middleware
+    const senderId = req.user.id;
+    let imageUrl = null;
+
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
 
     const message = await prisma.message.create({
       data: {
-        content,
+        content: content || null,
+        imageUrl,
         senderId,
         recipientId
       }
@@ -16,6 +45,7 @@ const sendMessage = async (req, res) => {
 
     res.status(201).json(message);
   } catch (error) {
+    console.error('Error sending message:', error);
     res.status(400).json({ error: "Failed to send message" });
   }
 };
@@ -28,8 +58,8 @@ const getMessagesByRecipientID = async (req, res) => {
         const messages = await prisma.message.findMany({
             where: {
                 OR: [
-                    // Messages sent from logged-in user to specific recipient
-                    { AND: [{ senderId: userId }, { recipientId: recipientId }] },
+                    // Messages sent by logged-in user to specific recipient
+                    { AND: [{ senderId: userId }, { recipientId }] },
                     // Messages received by logged-in user from specific recipient
                     { AND: [{ senderId: recipientId }, { recipientId: userId }] }
                 ]
@@ -37,16 +67,20 @@ const getMessagesByRecipientID = async (req, res) => {
             orderBy: {
                 createdAt: 'asc'
             },
-            include: {
+            select: {
+                id: true,
+                content: true,
+                imageUrl: true,
+                createdAt: true,
+                senderId: true,
+                recipientId: true,
                 sender: {
                     select: {
-                        id: true,
                         username: true
                     }
                 },
                 recipient: {
                     select: {
-                        id: true,
                         username: true
                     }
                 }
@@ -55,6 +89,7 @@ const getMessagesByRecipientID = async (req, res) => {
 
         res.status(200).json(messages);
     } catch (error) {
+        console.error('Error fetching messages:', error);
         res.status(400).json({ error: "Failed to fetch messages" });
     }
 };
@@ -189,5 +224,6 @@ module.exports = {
   sendMessage,
   getMessagesByRecipientID,
   getConversations,
-  getAvailableUsers
+  getAvailableUsers,
+  upload
 };

@@ -6,17 +6,20 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id            String    @id @default(cuid())
-  username      String    @unique
-  email         String    @unique
-  password      String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  status        UserStatus @default(OFFLINE)
-  profile       Profile?
-  sentMessages     Message[] @relation("SentMessages")
+  id              String    @id @default(cuid())
+  username        String    @unique
+  email           String    @unique
+  password        String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  status          UserStatus @default(OFFLINE)
+  profile         Profile?
+  sentMessages    Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+  groups          GroupMember[]
+  ownedGroups     Group[]    @relation("GroupOwner")
 }
 
 model Profile {
@@ -29,14 +32,40 @@ model Profile {
 
 model Message {
   id          String    @id @default(cuid())
-  content     String
+  content     String?
+  imageUrl    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   sender      User      @relation("SentMessages", fields: [senderId], references: [id])
   senderId    String
-  recipient   User      @relation("ReceivedMessages", fields: [recipientId], references: [id])
-  recipientId String
+  recipient   User?     @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  recipientId String?
+  group       Group?    @relation(fields: [groupId], references: [id])
+  groupId     String?
   read        Boolean   @default(false)
+}
+
+model Group {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  owner       User      @relation("GroupOwner", fields: [ownerId], references: [id])
+  ownerId     String
+  members     GroupMember[]
+  messages    Message[]
+}
+
+model GroupMember {
+  id        String    @id @default(cuid())
+  group     Group     @relation(fields: [groupId], references: [id])
+  groupId   String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  joinedAt  DateTime  @default(now())
+
+  @@unique([groupId, userId])
 }
 
 enum UserStatus {

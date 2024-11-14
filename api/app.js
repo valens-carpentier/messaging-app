@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth.routes");
 const messageRoutes = require("./routes/message.routes");
 const profileRoutes = require("./routes/profile.routes");
 const cleanup = require("./utils/cleanup");
+const path = require('path');
 
 app.use(cors({
   origin: "http://localhost:5173",
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/profile", profileRoutes);
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

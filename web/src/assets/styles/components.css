@@ -1,0 +1,42 @@
+/* Button Styles */
+.btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  border: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--whatsapp-teal);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--whatsapp-dark);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--whatsapp-teal);
+  color: var(--whatsapp-teal);
+}
+
+.btn-secondary:hover {
+  background-color: var(--whatsapp-light-bg);
+}
+
+/* Input Styles */
+.input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--whatsapp-teal);
+  box-shadow: 0 0 0 2px rgba(18, 140, 126, 0.2);
+} 

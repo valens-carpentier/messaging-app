@@ -1,0 +1,217 @@
+:root {
+  --whatsapp-green: #25D366;
+  --whatsapp-teal: #128C7E;
+  --whatsapp-dark: #075E54;
+  --whatsapp-light-bg: #f0f2f5;
+}
+
+.profile-content {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header {
+  background-color: var(--whatsapp-dark);
+  padding: 1.5rem 2rem;
+  color: white;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.back-button {
+  flex: 0 0 140px;
+  color: white;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-button.logout {
+  flex: 0 0 140px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.nav-button.logout:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-field {
+  padding: 1rem;
+}
+
+.profile-field.static {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+}
+
+.profile-field.editable {
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.profile-field.editable:hover {
+  border-color: var(--whatsapp-teal);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.field-label {
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field-value {
+  color: #333;
+  font-size: 1rem;
+}
+
+.field-value.clickable {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: var(--whatsapp-teal);
+  background-color: var(--whatsapp-light-bg);
+  word-break: break-word;
+}
+
+.field-value.clickable:hover {
+  background-color: #e8e8e8;
+}
+
+.field-edit {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--whatsapp-light-bg);
+  border-radius: 8px;
+}
+
+.field-edit input,
+.field-edit textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+.field-edit input:focus,
+.field-edit textarea:focus {
+  outline: none;
+  border-color: var(--whatsapp-teal);
+  box-shadow: 0 0 0 2px rgba(18, 140, 126, 0.2);
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.save-button,
+.cancel-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.save-button {
+  background-color: var(--whatsapp-teal);
+  color: white;
+  border: none;
+}
+
+.save-button:hover {
+  background-color: var(--whatsapp-dark);
+}
+
+.cancel-button {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+  background-color: #f5f5f5;
+}
+
+.error-message {
+  padding: 0.75rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  padding: 0.75rem;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.header button {
+  composes: btn btn-secondary;
+}
+
+.new-conversation-button {
+  composes: btn btn-primary;
+}
+
+.message-input input {
+  composes: input;
+}

@@ -1,11 +1,4 @@
-:root {
-  --whatsapp-green: #25D366;
-  --whatsapp-teal: #128C7E;
-  --whatsapp-dark: #075E54;
-  --whatsapp-light-bg: #f0f2f5;
-}
-
-.login-container {
+.register-container {
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -15,13 +8,13 @@
   padding: 2rem;
 }
 
-.login-title {
+.register-title {
   color: var(--whatsapp-dark);
   margin-bottom: 2rem;
   font-size: 2rem;
 }
 
-.login-error {
+.register-error {
   color: #dc3545;
   margin-bottom: 1rem;
   padding: 0.5rem 1rem;
@@ -32,26 +25,17 @@
   text-align: center;
 }
 
-form {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-}
-
-.login-form-group {
+.register-form-group {
   margin-bottom: 1.5rem;
 }
 
-.login-form-group label {
+.register-form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: #333;
 }
 
-.login-form-group input {
+.register-form-group input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ddd;
@@ -59,20 +43,14 @@ form {
   font-size: 1rem;
 }
 
-.login-form-group input:focus {
+.register-form-group input:focus {
   outline: none;
   border-color: var(--whatsapp-teal);
   box-shadow: 0 0 0 2px rgba(18, 140, 126, 0.2);
 }
 
-.login-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.login-button {
-  flex: 1;
+.register-button {
+  width: 100%;
   padding: 0.75rem;
   background-color: var(--whatsapp-teal);
   color: white;
@@ -81,26 +59,11 @@ form {
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.2s;
+  margin-top: 1rem;
 }
 
-.login-button:hover {
+.register-button:hover {
   background-color: var(--whatsapp-dark);
-}
-
-.register-link-button {
-  flex: 1;
-  padding: 0.75rem;
-  background-color: white;
-  color: var(--whatsapp-teal);
-  border: 1px solid var(--whatsapp-teal);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-.register-link-button:hover {
-  background-color: var(--whatsapp-light-bg);
 }
 
 .header button {

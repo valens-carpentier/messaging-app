@@ -1,10 +1,76 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import '../assets/styles/admin.css';
+
+const BASE_URL = "http://localhost:3000";
+const API_URL = `${BASE_URL}/api`;
+
+const MessageInput = ({ onSubmit, newMessage, setNewMessage }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    if ((!newMessage.trim() && !selectedImage)) return;
+
+    const formData = new FormData();
+    if (newMessage.trim()) formData.append('content', newMessage);
+    if (selectedImage) formData.append('image', selectedImage);
+
+    await onSubmit(formData);
+    setNewMessage('');
+    setSelectedImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }, [newMessage, selectedImage, onSubmit, setNewMessage]);
+
+  const handleImageSelect = useCallback((e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedImage(file);
+    } else {
+      alert('Please select an image file');
+    }
+  }, []);
+
+  return (
+    <form onSubmit={handleSubmit} className="message-input">
+      <div className="input-container">
+        {selectedImage && (
+          <div className="image-preview">
+            <img src={URL.createObjectURL(selectedImage)} alt="Preview" />
+            <button type="button" onClick={() => setSelectedImage(null)}>×</button>
+          </div>
+        )}
+        <div className="input-row">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type a message..."
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelect}
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+          />
+          <button 
+            type="button" 
+            onClick={() => fileInputRef.current?.click()}
+            className="attach-button"
+          >
+            📎
+          </button>
+          <button type="submit">Send</button>
+        </div>
+      </div>
+    </form>
+  );
+};
 
 function AdminPage() {
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api";
   const [conversations, setConversations] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -73,22 +139,17 @@ function AdminPage() {
     }
   };
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedUser) return;
-
+  const handleSendMessage = useCallback(async (formData) => {
     try {
       const token = localStorage.getItem('token');
+      formData.append('recipientId', selectedUser);
+
       const response = await fetch(`${API_URL}/messages/send`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          recipientId: selectedUser,
-          content: newMessage
-        })
+        body: formData
       });
 
       if (!response.ok) throw new Error('Failed to send message');
@@ -97,7 +158,7 @@ function AdminPage() {
     } catch (error) {
       console.error('Error sending message:', error);
     }
-  };
+  }, [selectedUser]);
 
   const handleStartNewConversation = (userId) => {
     setSelectedUser(userId);
@@ -197,21 +258,34 @@ function AdminPage() {
                     key={message.id}
                     className={`message ${message.senderId === selectedUser ? 'received' : 'sent'}`}
                   >
-                    <p>{message.content}</p>
-                    <small>{new Date(message.createdAt).toLocaleString()}</small>
+                    <div className="message-content">
+                      {message.content && <p>{message.content}</p>}
+                      {message.imageUrl && (
+                        <img 
+                          src={message.senderId === selectedUser 
+                            ? `${BASE_URL}${message.imageUrl}`
+                            : `${BASE_URL}/api${message.imageUrl}`
+                          }
+                          alt="Message attachment" 
+                          className="message-image"
+                          onClick={() => window.open(message.senderId === selectedUser 
+                            ? `${BASE_URL}${message.imageUrl}`
+                            : `${BASE_URL}/api${message.imageUrl}`, 
+                            '_blank'
+                          )}
+                        />
+                      )}
+                      <small>{new Date(message.createdAt).toLocaleString()}</small>
+                    </div>
                   </div>
                 ))}
               </div>
               
-              <form onSubmit={sendMessage} className="message-input">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type a message..."
-                />
-                <button type="submit">Send</button>
-              </form>
+              <MessageInput 
+                onSubmit={handleSendMessage} 
+                newMessage={newMessage} 
+                setNewMessage={setNewMessage} 
+              />
             </>
           ) : (
             <div className="no-conversation">

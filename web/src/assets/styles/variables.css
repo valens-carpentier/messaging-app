@@ -1,0 +1,31 @@
+:root {
+  /* Colors */
+  --whatsapp-green: #25D366;
+  --whatsapp-teal: #128C7E;
+  --whatsapp-dark: #075E54;
+  --whatsapp-light-bg: #f0f2f5;
+  --whatsapp-chat-bg: #efeae2;
+  --message-out: #d9fdd3;
+  --message-in: #ffffff;
+  
+  /* Text Colors */
+  --text-primary: #111b21;
+  --text-secondary: #667781;
+  
+  /* Common Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 6px rgba(0,0,0,0.1);
+} 

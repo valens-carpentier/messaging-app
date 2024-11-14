@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/styles/login.css';
 
-const API_URL = "http://localhost:3000/api/auth"
+const API_URL = import.meta.env.VITE_API_URL + "/auth"
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -26,10 +26,16 @@ function LoginPage() {
         }
   
         const data = await response.json();
-        localStorage.setItem('token', data.token);
-        navigate('/admin');
-      } catch (err) {
-        setError(err.message);
+        console.log('Login response:', data);
+  
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          console.log('Token stored:', localStorage.getItem('token'));
+          navigate('/admin');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        setError('Login failed');
       }
     };
   

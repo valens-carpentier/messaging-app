@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import '../assets/styles/admin.css';
 
-const BASE_URL = "http://localhost:3000";
-const API_URL = `${BASE_URL}/api`;
+const API_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const MessageInput = ({ onSubmit, newMessage, setNewMessage }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -79,6 +79,8 @@ function AdminPage() {
   const [availableUsers, setAvailableUsers] = useState([]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log('Current token in localStorage:', token);
     fetchConversations();
   }, []);
 
@@ -125,13 +127,21 @@ function AdminPage() {
   const fetchAvailableUsers = async () => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Token being sent:', token);
+
       const response = await fetch(`${API_URL}/messages/available-users`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch users');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Server error response:', errorData);
+        throw new Error(errorData.error || 'Failed to fetch users');
+      }
+
       const data = await response.json();
       setAvailableUsers(data);
     } catch (error) {
